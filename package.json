@@ -1,0 +1,16 @@
+{
+	"name": "collection-service",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "yarn test",
+		"start:functions": "GOOGLE_APPLICATION_CREDENTIALS=collection-service.json firebase emulators:start --only functions"
+	},
+	"author": "Tyler Weeres",
+	"license": "ISC",
+	"dependencies": {},
+	"devDependencies": {
+		"eslint": "^7.2.0"
+	}
+}
