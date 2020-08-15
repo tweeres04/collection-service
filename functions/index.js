@@ -11,7 +11,7 @@ const { parse, isTomorrow, format } = require('date-fns');
 admin.initializeApp({
 	credential: admin.credential.applicationDefault(),
 });
-
+f;
 exports.getAndStoreCollectionDatesHttps = functions.https.onRequest(
 	async (req, res) => {
 		const dates = await getNextCollectionDates();
@@ -84,8 +84,8 @@ async function getNextCollectionDates() {
 		'https://www.oakbay.ca/municipal-services/garbage-recycling/collection-service-schedule',
 		querystring.stringify({
 			action: 'lookup',
-			street_number: functions.config().address.streetname,
-			street_name: functions.config().address.streetnumber,
+			street_number: functions.config().address.streetnumber,
+			street_name: functions.config().address.streetname,
 		})
 	);
 	const $ = cheerio.load(data);
