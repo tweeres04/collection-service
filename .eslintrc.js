@@ -4,7 +4,7 @@ module.exports = {
 		es6: true,
 		node: true,
 	},
-	extends: 'eslint:recommended',
+	extends: 'react-app',
 	globals: {
 		Atomics: 'readonly',
 		SharedArrayBuffer: 'readonly',
@@ -16,4 +16,4 @@ module.exports = {
 	rules: {
 		'no-console': 'warn',
 	},
-};
+}
