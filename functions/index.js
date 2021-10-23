@@ -1,103 +1,138 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const mailgun = require('mailgun-js');
+const functions = require('firebase-functions')
+const admin = require('firebase-admin')
+const mailgun = require('mailgun-js')
 
-const { scrapeHTML } = require('scrape-it');
-const cheerio = require('cheerio');
-const axios = require('axios');
-const querystring = require('querystring');
-const { parse, isTomorrow, format } = require('date-fns');
+const { scrapeHTML } = require('scrape-it')
+const cheerio = require('cheerio')
+const axios = require('axios')
+const querystring = require('querystring')
+const { parse, isTomorrow, format } = require('date-fns')
 
 admin.initializeApp({
 	credential: admin.credential.applicationDefault(),
-});
-f;
+})
+
 exports.getAndStoreCollectionDatesHttps = functions.https.onRequest(
 	async (req, res) => {
-		const dates = await getNextCollectionDates();
-		await storeDates(dates);
-		res.sendStatus(204);
+		const dates = await getNextCollectionDates()
+		await storeDates(dates)
+		res.sendStatus(204)
 	}
-);
+)
 
 exports.checkDatesAndSendEmailHttps = functions.https.onRequest(
 	async (req, res) => {
-		await checkDatesAndSendEmail();
-		res.sendStatus(204);
+		await checkDatesAndSendEmail()
+		res.sendStatus(204)
 	}
-);
+)
 
 exports.checkDatesAndSendEmail = functions.pubsub
 	.schedule('every day 08:00')
 	.timeZone('America/Vancouver')
 	.onRun(async () => {
-		await checkDatesAndSendEmail();
-	});
+		await checkDatesAndSendEmail()
+	})
 
 exports.getAndStoreCollectionDates = functions.pubsub
 	.schedule('0 0 1,15 * *')
 	.timeZone('America/Vancouver')
 	.onRun(async () => {
-		const dates = await getNextCollectionDates();
-		await storeDates(dates);
-	});
+		const dates = await getNextCollectionDates()
+		await storeDates(dates)
+	})
 
 async function checkDatesAndSendEmail() {
-	const datesRef = admin.firestore().doc('data/dates');
-	const snapshot = await datesRef.get();
+	const snapshot = await admin.firestore().collection('dates').get()
 
-	let nextCollectionDates;
-	if (!snapshot.exists) {
-		throw 'No collection dates in database';
-	} else {
-		nextCollectionDates = snapshot.data().dates.map((d) => d.toDate());
+	if (snapshot.empty) {
+		throw 'No collection dates in database'
 	}
 
-	console.log('nextCollectionDates', nextCollectionDates);
+	const promises = []
+	snapshot.forEach((doc) => {
+		async function go() {
+			const nextCollectionDates = doc.data().dates.map((d) => d.toDate())
 
-	const collectionDateToNotify = nextCollectionDates.find(isTomorrow);
+			console.log('nextCollectionDates', nextCollectionDates)
 
-	console.log('collectionDateToNotify', collectionDateToNotify);
+			const collectionDateToNotify = nextCollectionDates.find(isTomorrow)
 
-	if (collectionDateToNotify) {
-		const mg = mailgun({
-			apiKey: functions.config().mailgun.key,
-			domain: functions.config().mailgun.domain,
-		});
-		const data = {
-			from: 'Collection Service Notification <collection-service@tweeres.ca>',
-			to: functions.config().mailgun.toemail,
-			subject: 'Your pickup day is tomorrow',
-			text: `Your next pickup is tomorrow: ${format(
-				collectionDateToNotify,
-				'eee MMM d, Y'
-			)}`,
-		};
-		await mg.messages().send(data);
+			console.log('collectionDateToNotify', collectionDateToNotify)
 
-		console.log('Sent email');
-	}
+			if (collectionDateToNotify) {
+				const { email } = await admin.auth().getUser(doc.id)
+				const mg = mailgun({
+					apiKey: functions.config().mailgun.key,
+					domain: functions.config().mailgun.domain,
+				})
+				const data = {
+					from: 'Collection Service Notification <collection-service@tweeres.ca>',
+					to: email,
+					subject: 'Your pickup day is tomorrow',
+					text: `Your next pickup is tomorrow: ${format(
+						collectionDateToNotify,
+						'eee MMM d, Y'
+					)}`,
+				}
+				await mg.messages().send(data)
+
+				console.log(`Sent email to ${email}`)
+			}
+		}
+
+		promises.push(go())
+	})
+
+	await Promise.all(promises)
 }
 
 async function getNextCollectionDates() {
-	const { data } = await axios.post(
-		'https://www.oakbay.ca/municipal-services/garbage-recycling/collection-service-schedule',
-		querystring.stringify({
-			action: 'lookup',
-			street_number: functions.config().address.streetnumber,
-			street_name: functions.config().address.streetname,
-		})
-	);
-	const $ = cheerio.load(data);
-	const dates = scrapeHTML($, {
-		dates: { listItem: '.garbage-next-date' },
-	}).dates.map((d) => parse(d, 'EEEE, MMMM, do', new Date()));
+	const querySnapshot = await admin.firestore().collection('settings').get()
 
-	console.log('Found dates', dates);
+	const result = {}
+	const promises = []
 
-	return dates;
+	querySnapshot.forEach((doc) => {
+		async function go() {
+			const address = doc.data()
+			const { data } = await axios.post(
+				'https://www.oakbay.ca/municipal-services/garbage-recycling/collection-service-schedule',
+				querystring.stringify({
+					action: 'lookup',
+					street_number: address.houseNumber,
+					street_name: address.streetName,
+				})
+			)
+			const $ = cheerio.load(data)
+			const dates = scrapeHTML($, {
+				dates: { listItem: '.garbage-next-date' },
+			}).dates.map((d) => parse(d, 'EEEE, MMMM, do', new Date()))
+
+			console.log('Found dates', dates)
+
+			result[doc.id] = dates
+		}
+
+		promises.push(go())
+	})
+
+	await Promise.all(promises)
+
+	console.log(result)
+
+	return result
 }
 
 function storeDates(dates) {
-	return admin.firestore().doc('data/dates').set({ dates });
+	const promises = []
+	Object.keys(dates).forEach((address) => {
+		const promise = admin
+			.firestore()
+			.doc(`dates/${address}`)
+			.set({ dates: dates[address] })
+		promises.push(promise)
+	})
+
+	return Promise.all(promises)
 }
