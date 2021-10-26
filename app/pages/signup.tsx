@@ -17,8 +17,8 @@ const Home: NextPage = () => {
 	const [password, setPassword] = useState('')
 	const router = useRouter()
 
-	function redirectToSetup() {
-		router.push('/setup')
+	function redirectToSettings() {
+		router.push('/settings')
 	}
 
 	async function signInOrCreateAccount() {
@@ -26,14 +26,14 @@ const Home: NextPage = () => {
 
 		try {
 			await signInWithEmailAndPassword(auth, email, password)
-			redirectToSetup()
+			redirectToSettings()
 		} catch (err) {
 			console.error({ code: err.code, message: err.message })
 			if (err.code === 'auth/user-not-found') {
 				try {
 					await createUserWithEmailAndPassword(auth, email, password)
 
-					redirectToSetup()
+					redirectToSettings()
 				} catch (err) {
 					console.error(err)
 				}
