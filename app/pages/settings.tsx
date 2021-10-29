@@ -122,21 +122,26 @@ function Settings() {
 										htmlFor="streetNameInput"
 										className="label"
 									>
-										Your address
+										Street name
 									</label>
 									<div className="control">
-										<input
-											type="text"
-											className="input"
-											id="streetNameInput"
-											list="streetNamesList"
-											value={streetName}
-											onChange={(event) => {
-												setStreetName(
-													event.target.value
-												)
-											}}
-										/>
+										<div className="select">
+											<select
+												id="streetNameInput"
+												value={streetName}
+												onChange={(event) => {
+													setStreetName(
+														event.target.value
+													)
+												}}
+											>
+												{streetNames.map((sn) => (
+													<option key={sn}>
+														{sn}
+													</option>
+												))}
+											</select>
+										</div>
 									</div>
 								</div>
 								<div className="field">
