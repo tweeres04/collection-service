@@ -50,14 +50,7 @@ const Home: NextPage = () => {
 	}
 
 	return (
-		<div className="container">
-			<div className="navbar">
-				<div className="navbar-brand">
-					<a href="/" className="navbar-item">
-						Oak Bay Collection Service Emails
-					</a>
-				</div>
-			</div>
+		<>
 			<Head>
 				<title>Oak Bay Collection Service Notifications</title>
 				<meta
@@ -127,7 +120,7 @@ const Home: NextPage = () => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 

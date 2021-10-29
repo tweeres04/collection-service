@@ -59,14 +59,7 @@ function Settings() {
 	}
 
 	return isLoading ? null : (
-		<div className="container">
-			<div className="navbar">
-				<div className="navbar-brand">
-					<a href="/" className="navbar-item">
-						Oak Bay Collection Service Emails
-					</a>
-				</div>
-			</div>
+		<>
 			<datalist id="streetNamesList">
 				{streetNames.map((sn) => (
 					<option key={sn}>{sn}</option>
@@ -164,7 +157,7 @@ function Settings() {
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 
