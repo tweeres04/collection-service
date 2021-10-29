@@ -41,13 +41,13 @@ function Home() {
 									<h2 className="subtitle">
 										Get an email the day before. No Hassle!
 									</h2>
-									<Link href="/signup">
+									<Link href="/signin">
 										<a
 											className="button is-primary is-large"
 											onClick={() => {
 												logEvent(
 													getAnalytics(),
-													'click_signup_button'
+													'click_signin_button'
 												)
 											}}
 										>
