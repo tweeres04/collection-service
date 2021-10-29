@@ -3,12 +3,14 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-import '../lib/initializeFirebase'
 import {
 	getAuth,
 	signInWithEmailAndPassword,
 	createUserWithEmailAndPassword,
 } from 'firebase/auth'
+import { getAnalytics, logEvent } from '@firebase/analytics'
+
+import '../lib/initializeFirebase'
 
 import 'bulma/css/bulma.min.css'
 
@@ -23,15 +25,21 @@ const Home: NextPage = () => {
 
 	async function signInOrCreateAccount() {
 		const auth = getAuth()
+		const analytics = getAnalytics()
 
 		try {
 			await signInWithEmailAndPassword(auth, email, password)
+
+			logEvent(analytics, 'sign_in')
+
 			redirectToSettings()
 		} catch (err) {
 			console.error({ code: err.code, message: err.message })
 			if (err.code === 'auth/user-not-found') {
 				try {
 					await createUserWithEmailAndPassword(auth, email, password)
+
+					logEvent(analytics, 'create_account')
 
 					redirectToSettings()
 				} catch (err) {
@@ -110,7 +118,7 @@ const Home: NextPage = () => {
 											className="button is-primary"
 											onClick={signInOrCreateAccount}
 										>
-											Sign up
+											Sign up/Sign in
 										</button>
 									</div>
 								</div>

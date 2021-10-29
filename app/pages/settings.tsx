@@ -9,6 +9,7 @@ import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
 import 'bulma/css/bulma.min.css'
 
 import streetNames from '../lib/streetNames'
+import { getAnalytics, logEvent } from '@firebase/analytics'
 
 function Settings() {
 	const [user, setUser] = useState()
@@ -42,16 +43,18 @@ function Settings() {
 		getSettings()
 	}, [user])
 
-	async function saveSettings() {
+	function saveSettings() {
 		const auth = getAuth()
 		const db = getFirestore()
+		const analytics = getAnalytics()
 
 		const { uid } = auth.currentUser
 
-		await setDoc(doc(db, 'settings', uid), {
+		setDoc(doc(db, 'settings', uid), {
 			houseNumber,
 			streetName,
 		})
+		logEvent(analytics, 'save_settings')
 		console.log({ houseNumber, streetName }, 'saved')
 	}
 
