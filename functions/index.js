@@ -67,10 +67,10 @@ async function checkDatesAndSendEmail() {
 					domain: functions.config().mailgun.domain,
 				})
 				const data = {
-					from: 'Collection Service Notification <collection-service@tweeres.ca>',
+					from: 'Garbage Service Notification <garbage-service@tweeres.ca>',
 					to: email,
-					subject: 'Your pickup day is tomorrow',
-					text: `Your next pickup is tomorrow: ${format(
+					subject: 'Your garbage day is tomorrow',
+					text: `Your next garbage is tomorrow: ${format(
 						collectionDateToNotify,
 						'eee MMM d, Y'
 					)}`,

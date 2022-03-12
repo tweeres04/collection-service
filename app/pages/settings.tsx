@@ -6,8 +6,6 @@ import '../lib/initializeFirebase'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
 
-import 'bulma/css/bulma.min.css'
-
 import streetNames from '../lib/streetNames'
 import { getAnalytics, logEvent } from '@firebase/analytics'
 
@@ -66,10 +64,10 @@ function Settings() {
 				))}
 			</datalist>
 			<Head>
-				<title>Oak Bay Collection Service Notifications</title>
+				<title>Oak Bay Garbage Service Notifications</title>
 				<meta
 					name="description"
-					content="Get notified when your collection day is"
+					content="Get notified when your garbage day is"
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>

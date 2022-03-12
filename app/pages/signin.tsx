@@ -12,8 +12,6 @@ import { getAnalytics, logEvent } from '@firebase/analytics'
 
 import '../lib/initializeFirebase'
 
-import 'bulma/css/bulma.min.css'
-
 const Home: NextPage = () => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -52,10 +50,10 @@ const Home: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<title>Oak Bay Collection Service Notifications</title>
+				<title>Oak Bay Garbage Service Notifications</title>
 				<meta
 					name="description"
-					content="Get notified when your collection day is"
+					content="Get notified when your garbage day is"
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>

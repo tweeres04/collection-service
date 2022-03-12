@@ -1,4 +1,3 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -7,35 +6,35 @@ import { getAnalytics, logEvent } from 'firebase/analytics'
 
 import '../lib/initializeFirebase'
 
-import 'bulma/css/bulma.min.css'
-
-import heroImage from '../assets/hero.png'
+import heroImage from '../assets/hero-light.png'
 
 function Home() {
 	return (
 		<>
 			<Head>
-				<title>Oak Bay Collection Service Notifications</title>
+				<title>Oak Bay Garbage Service Notifications</title>
 				<meta
 					name="description"
-					content="Get notified when your collection day is"
+					content="Get notified when your garbage day is"
 				/>
-				<link rel="icon" href="/favicon.ico" />
+				<link rel="icon" href="/truck.png" />
 			</Head>
-			<div className="hero is-halfheight">
+			<div className="hero is-halfheight is-primary">
 				<div className="hero-body">
 					<div className="container">
 						<div className="columns is-vcentered">
 							<div className="column">
 								<h1 className="title">
-									Stop worrying about collection day
+									Make garbage day effortless
 								</h1>
 								<h2 className="subtitle">
-									Get an email the day before. No Hassle!
+									Set up your address, then get emails the day
+									before, every time. No more fiddling with
+									hard to use schedules.
 								</h2>
 								<Link href="/signin">
 									<a
-										className="button is-primary is-large"
+										className="button is-primary is-large is-inverted"
 										onClick={() => {
 											logEvent(
 												getAnalytics(),
@@ -43,12 +42,15 @@ function Home() {
 											)
 										}}
 									>
-										Set it up for free
+										Set it up for free →
 									</a>
 								</Link>
 							</div>
 							<div className="column has-text-centered">
-								<Image src={heroImage} />
+								<Image
+									src={heroImage}
+									alt="A screenshot of an email that tells you your garbage day is tomorrow"
+								/>
 							</div>
 						</div>
 					</div>
