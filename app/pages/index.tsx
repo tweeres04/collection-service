@@ -25,7 +25,7 @@ function Home() {
 						<div className="columns is-vcentered">
 							<div className="column">
 								<h1 className="title">
-									Make garbage day effortless
+									Make garbage day in Oak Bay effortless
 								</h1>
 								<h2 className="subtitle">
 									Set up your address, then get emails the day
