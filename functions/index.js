@@ -70,7 +70,7 @@ async function checkDatesAndSendEmail() {
 					from: 'Garbage Service Notification <garbage-service@tweeres.ca>',
 					to: email,
 					subject: 'Your garbage day is tomorrow',
-					text: `Your next garbage is tomorrow: ${format(
+					text: `Your next garbage day is tomorrow: ${format(
 						collectionDateToNotify,
 						'eee MMM d, Y'
 					)}`,
