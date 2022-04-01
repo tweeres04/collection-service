@@ -1,3 +1,5 @@
 {
-	"functions": {}
+	"functions": {
+		"runtime": "nodejs16"
+	}
 }
