@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged } from '@firebase/auth'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import clsx from 'clsx'
+import Head from 'next/head'
 
 export default function Layout({ children }) {
 	const [user, setUser] = useState('loading')
@@ -21,6 +22,14 @@ export default function Layout({ children }) {
 
 	return (
 		<>
+			<Head>
+				<title>Oak Bay Garbage Service Notifications</title>
+				<meta
+					name="description"
+					content="Make garbage day in Oak Bay effortless. We'll send you an email the day before."
+				/>
+				<link rel="icon" href="/truck.png" />
+			</Head>
 			<div className="navbar is-primary">
 				<div className="container">
 					<div className="navbar-brand">

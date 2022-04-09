@@ -50,12 +50,7 @@ const Home: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<title>Oak Bay Garbage Service Notifications</title>
-				<meta
-					name="description"
-					content="Get notified when your garbage day is"
-				/>
-				<link rel="icon" href="/favicon.ico" />
+				<meta name="robots" content="noindex" />
 			</Head>
 			<div className="hero is-large">
 				<div className="hero-body">

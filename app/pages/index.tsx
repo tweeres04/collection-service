@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -11,14 +10,6 @@ import heroImage from '../assets/hero-light.png'
 function Home() {
 	return (
 		<>
-			<Head>
-				<title>Oak Bay Garbage Service Notifications</title>
-				<meta
-					name="description"
-					content="Get notified when your garbage day is"
-				/>
-				<link rel="icon" href="/truck.png" />
-			</Head>
 			<div className="hero is-halfheight is-primary">
 				<div className="hero-body">
 					<div className="container">

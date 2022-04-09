@@ -58,19 +58,14 @@ function Settings() {
 
 	return isLoading ? null : (
 		<>
+			<Head>
+				<meta name="robots" content="noindex" />
+			</Head>
 			<datalist id="streetNamesList">
 				{streetNames.map((sn) => (
 					<option key={sn}>{sn}</option>
 				))}
 			</datalist>
-			<Head>
-				<title>Oak Bay Garbage Service Notifications</title>
-				<meta
-					name="description"
-					content="Get notified when your garbage day is"
-				/>
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
 			<div className="hero is-medium">
 				<div className="hero-body">
 					<div className="container">
