@@ -38,8 +38,12 @@ exports.getAndStoreCollectionDates = functions.pubsub
 	.schedule('0 0 1,15 * *')
 	.timeZone('America/Vancouver')
 	.onRun(async () => {
-		const dates = await getNextCollectionDates()
-		await storeDates(dates)
+		try {
+			const dates = await getNextCollectionDates()
+			await storeDates(dates)
+		} catch (err) {
+			console.error(err.request)
+		}
 	})
 
 async function checkDatesAndSendEmail() {
