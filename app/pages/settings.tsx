@@ -3,25 +3,36 @@ import Head from 'next/head'
 
 import '../lib/initializeFirebase'
 
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
+import {
+	getFirestore,
+	doc,
+	setDoc,
+	getDoc,
+	Timestamp,
+} from 'firebase/firestore'
+import { format } from 'date-fns'
 
 import streetNames from '../lib/streetNames'
 import { getAnalytics, logEvent } from '@firebase/analytics'
 
-function Settings() {
-	const [user, setUser] = useState()
-	const [isLoading, setIsLoading] = useState(true)
-	const [houseNumber, setHouseNumber] = useState('')
-	const [streetName, setStreetName] = useState('')
+function useUser() {
+	const [user, setUser] = useState<User | null>(null)
 
 	useEffect(() => {
 		const auth = getAuth()
 		onAuthStateChanged(auth, (user) => {
-			console.log({ user })
 			setUser(user)
 		})
 	}, [])
+
+	return user
+}
+
+function useSettings(user: User | null) {
+	const [isLoading, setIsLoading] = useState(true)
+	const [houseNumber, setHouseNumber] = useState('')
+	const [streetName, setStreetName] = useState('')
 
 	useEffect(() => {
 		async function getSettings() {
@@ -46,17 +57,73 @@ function Settings() {
 		const db = getFirestore()
 		const analytics = getAnalytics()
 
-		const { uid } = auth.currentUser
+		const { uid } = auth.currentUser as User
 
 		setDoc(doc(db, 'settings', uid), {
 			houseNumber,
 			streetName,
 		})
 		logEvent(analytics, 'save_settings')
-		console.log({ houseNumber, streetName }, 'saved')
 	}
 
-	return isLoading ? null : (
+	return {
+		isLoading,
+		houseNumber,
+		setHouseNumber,
+		streetName,
+		setStreetName,
+		saveSettings,
+	}
+}
+
+function useCollectionDates(user: User | null) {
+	const [isLoading, setIsLoading] = useState(true)
+	const [collectionDates, setCollectionDates] = useState<string[] | null>(
+		null
+	)
+
+	useEffect(() => {
+		async function getCollectionDates() {
+			if (user) {
+				const db = getFirestore()
+				const datesRef = doc(db, 'dates', user.uid)
+				const datesSnapshot = await getDoc(datesRef)
+
+				if (datesSnapshot.exists()) {
+					const dates = datesSnapshot
+						.data()
+						?.dates?.map((d: Timestamp) => {
+							let date = d.toDate()
+							date.setDate(date.getDate() + 1) // kick it forward one day to account for UTC on the server
+							date.setHours(0)
+							return format(date, 'eee MMM d, Y')
+						})
+					setCollectionDates(dates)
+				}
+
+				setIsLoading(false)
+			}
+		}
+		getCollectionDates()
+	}, [user])
+
+	return { collectionDates, isLoading }
+}
+
+function Settings() {
+	const user = useUser()
+	const {
+		isLoading: isLoadingSettings,
+		houseNumber,
+		setHouseNumber,
+		streetName,
+		setStreetName,
+		saveSettings,
+	} = useSettings(user)
+	const { isLoading: isLoadingCollectionDates, collectionDates } =
+		useCollectionDates(user)
+
+	return isLoadingSettings ? null : (
 		<>
 			<Head>
 				<meta name="robots" content="noindex" />
@@ -85,7 +152,7 @@ function Settings() {
 											className="input"
 											id="emailInput"
 											disabled
-											value={user.email}
+											value={user?.email || ''}
 										/>
 									</div>
 								</div>
@@ -151,6 +218,26 @@ function Settings() {
 									</div>
 								</div>
 							</div>
+							{!isLoadingCollectionDates && (
+								<div className="column content">
+									<h1>Next garbage days:</h1>
+									{collectionDates ? (
+										<ul>
+											{collectionDates.map((cd) => (
+												<li className="is-size-4">
+													{cd}
+												</li>
+											))}
+										</ul>
+									) : (
+										<p>
+											No dates fetched for this account
+											yet. Garbage dates are fetched on
+											the 1st and 15th of every month.
+										</p>
+									)}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
