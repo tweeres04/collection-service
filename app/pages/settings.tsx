@@ -28,6 +28,7 @@ function useSettings(getCollectionDates, user: User | null) {
 	const [isLoading, setIsLoading] = useState(true)
 	const [houseNumber, setHouseNumber] = useState('')
 	const [streetName, setStreetName] = useState('')
+	const [enabled, setEnabled] = useState(true)
 
 	useEffect(() => {
 		async function getSettings() {
@@ -38,8 +39,11 @@ function useSettings(getCollectionDates, user: User | null) {
 
 				if (settingsSnapshot.exists()) {
 					const settings = settingsSnapshot.data()
-					setHouseNumber(settings.houseNumber)
-					setStreetName(settings.streetName)
+					setHouseNumber(settings.houseNumber || '')
+					setStreetName(settings.streetName || '')
+					setEnabled(
+						settings.enabled === undefined ? true : settings.enabled
+					)
 				}
 				setIsLoading(false)
 			}
@@ -57,6 +61,7 @@ function useSettings(getCollectionDates, user: User | null) {
 		setDoc(doc(db, 'settings', uid), {
 			houseNumber,
 			streetName,
+			enabled,
 		}).then(getCollectionDates)
 		logEvent(analytics, 'save_settings')
 	}
@@ -67,6 +72,8 @@ function useSettings(getCollectionDates, user: User | null) {
 		setHouseNumber,
 		streetName,
 		setStreetName,
+		enabled,
+		setEnabled,
 		saveSettings,
 	}
 }
@@ -126,6 +133,8 @@ function Settings() {
 		setHouseNumber,
 		streetName,
 		setStreetName,
+		enabled,
+		setEnabled,
 		saveSettings,
 	} = useSettings(getCollectionDates, user)
 
@@ -213,6 +222,25 @@ function Settings() {
 								</div>
 								<div className="field">
 									<div className="control">
+										<label
+											htmlFor="enabledCheckbox"
+											className="checkbox"
+										>
+											<input
+												type="checkbox"
+												name="enabled"
+												id="enabledCheckbox"
+												checked={enabled}
+												onChange={(e) => {
+													setEnabled(e.target.checked)
+												}}
+											/>{' '}
+											Emails enabled
+										</label>
+									</div>
+								</div>
+								<div className="field">
+									<div className="control">
 										<button
 											className="button is-primary is-large"
 											onClick={saveSettings}
@@ -234,16 +262,24 @@ function Settings() {
 										{collectionDates.length > 0 ? (
 											<ul>
 												{collectionDates.map((cd) => (
-													<li className="is-size-4">
+													<li
+														className="is-size-4"
+														key={cd}
+													>
 														{cd}
 													</li>
 												))}
 											</ul>
-										) : (
+										) : enabled ? (
 											<p>
 												No dates found. Please double
 												check the address you entered
 												and try again.
+											</p>
+										) : (
+											<p>
+												You've disabled your
+												notifications.
 											</p>
 										)}
 									</>

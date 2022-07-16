@@ -117,13 +117,19 @@ async function getNextCollectionDates(querySnapshot) {
 
 	querySnapshot.forEach((doc) => {
 		async function go() {
-			const address = doc.data()
+			const settings = doc.data()
+
+			if (settings.enabled === false) {
+				result[doc.id] = []
+				return
+			}
+
 			const { data } = await axios.post(
 				'https://www.oakbay.ca/municipal-services/garbage-recycling/collection-service-schedule',
 				querystring.stringify({
 					action: 'lookup',
-					street_number: address.houseNumber,
-					street_name: address.streetName,
+					street_number: settings.houseNumber,
+					street_name: settings.streetName,
 				})
 			)
 			const $ = cheerio.load(data)
