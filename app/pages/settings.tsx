@@ -126,6 +126,7 @@ function Settings() {
 	return isLoadingSettings ? null : (
 		<>
 			<Head>
+				<title>Settings - Oak Bay Garbage Service Notifications</title>
 				<meta name="robots" content="noindex" />
 			</Head>
 			<datalist id="streetNamesList">
