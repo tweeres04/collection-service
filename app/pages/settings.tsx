@@ -1,16 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Head from 'next/head'
 
 import '../lib/initializeFirebase'
 
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
-import {
-	getFirestore,
-	doc,
-	setDoc,
-	getDoc,
-	Timestamp,
-} from 'firebase/firestore'
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
+import { getFunctions, httpsCallable } from 'firebase/functions'
 import { format } from 'date-fns'
 
 import streetNames from '../lib/streetNames'
@@ -29,7 +24,7 @@ function useUser() {
 	return user
 }
 
-function useSettings(user: User | null) {
+function useSettings(getCollectionDates, user: User | null) {
 	const [isLoading, setIsLoading] = useState(true)
 	const [houseNumber, setHouseNumber] = useState('')
 	const [streetName, setStreetName] = useState('')
@@ -62,7 +57,7 @@ function useSettings(user: User | null) {
 		setDoc(doc(db, 'settings', uid), {
 			houseNumber,
 			streetName,
-		})
+		}).then(getCollectionDates)
 		logEvent(analytics, 'save_settings')
 	}
 
@@ -82,36 +77,49 @@ function useCollectionDates(user: User | null) {
 		null
 	)
 
-	useEffect(() => {
+	const getCollectionDates = useCallback(
 		async function getCollectionDates() {
 			if (user) {
-				const db = getFirestore()
-				const datesRef = doc(db, 'dates', user.uid)
-				const datesSnapshot = await getDoc(datesRef)
+				setIsLoading(true)
 
-				if (datesSnapshot.exists()) {
-					const dates = datesSnapshot
-						.data()
-						?.dates?.map((d: Timestamp) => {
-							let date = d.toDate()
-							date.setDate(date.getDate() + 1) // kick it forward one day to account for UTC on the server
-							date.setHours(0)
-							return format(date, 'eee MMM d, Y')
-						})
+				const functions = getFunctions()
+				const getAndStoreCollectionDates = httpsCallable(
+					functions,
+					'getAndStoreCollectionDatesCallable'
+				)
+
+				let { data: dates } = await getAndStoreCollectionDates()
+
+				if (dates) {
+					dates = dates.map((dateString) => {
+						let date = new Date(dateString)
+						date.setDate(date.getDate() + 1) // kick it forward one day to account for UTC on the server
+						date.setHours(0)
+						return format(date, 'eee MMM d, Y')
+					})
 					setCollectionDates(dates)
 				}
 
 				setIsLoading(false)
 			}
-		}
-		getCollectionDates()
-	}, [user])
+		},
+		[user]
+	)
 
-	return { collectionDates, isLoading }
+	useEffect(() => {
+		getCollectionDates()
+	}, [getCollectionDates])
+
+	return { collectionDates, getCollectionDates, isLoading }
 }
 
 function Settings() {
 	const user = useUser()
+	const {
+		isLoading: isLoadingCollectionDates,
+		getCollectionDates,
+		collectionDates,
+	} = useCollectionDates(user)
 	const {
 		isLoading: isLoadingSettings,
 		houseNumber,
@@ -119,9 +127,7 @@ function Settings() {
 		streetName,
 		setStreetName,
 		saveSettings,
-	} = useSettings(user)
-	const { isLoading: isLoadingCollectionDates, collectionDates } =
-		useCollectionDates(user)
+	} = useSettings(getCollectionDates, user)
 
 	return isLoadingSettings ? null : (
 		<>
@@ -219,26 +225,30 @@ function Settings() {
 									</div>
 								</div>
 							</div>
-							{!isLoadingCollectionDates && (
-								<div className="column content">
-									<h1>Next garbage days:</h1>
-									{collectionDates ? (
-										<ul>
-											{collectionDates.map((cd) => (
-												<li className="is-size-4">
-													{cd}
-												</li>
-											))}
-										</ul>
-									) : (
-										<p>
-											No dates fetched for this account
-											yet. Garbage dates are fetched on
-											the 1st and 15th of every month.
-										</p>
-									)}
-								</div>
-							)}
+							<div className="column content">
+								{isLoadingCollectionDates ? (
+									<p>Fetching your next garbage days...</p>
+								) : (
+									<>
+										<h1>Your next garbage days:</h1>
+										{collectionDates.length > 0 ? (
+											<ul>
+												{collectionDates.map((cd) => (
+													<li className="is-size-4">
+														{cd}
+													</li>
+												))}
+											</ul>
+										) : (
+											<p>
+												No dates found. Please double
+												check the address you entered
+												and try again.
+											</p>
+										)}
+									</>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>

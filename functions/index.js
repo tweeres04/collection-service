@@ -20,6 +20,23 @@ exports.getAndStoreCollectionDatesHttps = functions.https.onRequest(
 	}
 )
 
+exports.getAndStoreCollectionDatesCallable = functions.https.onCall(
+	async (data, context) => {
+		const querySnapshot = await admin
+			.firestore()
+			.collection('settings')
+			.where(
+				admin.firestore.FieldPath.documentId(),
+				'==',
+				context.auth.uid
+			)
+			.get()
+		const collectionDates = await getNextCollectionDates(querySnapshot)
+		storeDates(collectionDates)
+		return collectionDates[context.auth.uid].map((d) => d.toISOString())
+	}
+)
+
 exports.checkDatesAndSendEmailHttps = functions.https.onRequest(
 	async (req, res) => {
 		await checkDatesAndSendEmail()
@@ -91,8 +108,9 @@ async function checkDatesAndSendEmail() {
 	await Promise.all(promises)
 }
 
-async function getNextCollectionDates() {
-	const querySnapshot = await admin.firestore().collection('settings').get()
+async function getNextCollectionDates(querySnapshot) {
+	querySnapshot =
+		querySnapshot || (await admin.firestore().collection('settings').get())
 
 	const result = {}
 	const promises = []
