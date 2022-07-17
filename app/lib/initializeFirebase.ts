@@ -1,4 +1,6 @@
 import { initializeApp } from 'firebase/app'
+import { getApp } from 'firebase/app'
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,3 +14,8 @@ const firebaseConfig = {
 }
 
 initializeApp(firebaseConfig)
+
+if (process.env.NODE_ENV !== 'production') {
+	const functions = getFunctions(getApp())
+	connectFunctionsEmulator(functions, 'localhost', 5001)
+}

@@ -1,14 +1,13 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 
 import '../lib/initializeFirebase'
 
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
-import { getFunctions, httpsCallable } from 'firebase/functions'
-import { format } from 'date-fns'
 
 import streetNames from '../lib/streetNames'
+import { useCollectionDates, Address } from '../lib/useCollectionDates'
 import { getAnalytics, logEvent } from '@firebase/analytics'
 
 function useUser() {
@@ -24,7 +23,10 @@ function useUser() {
 	return user
 }
 
-function useSettings(getCollectionDates, user: User | null) {
+function useSettings(
+	refreshCollectionDates: (address: Address) => Promise<unknown>,
+	user: User | null
+) {
 	const [isLoading, setIsLoading] = useState(true)
 	const [houseNumber, setHouseNumber] = useState('')
 	const [streetName, setStreetName] = useState('')
@@ -62,7 +64,7 @@ function useSettings(getCollectionDates, user: User | null) {
 			houseNumber,
 			streetName,
 			enabled,
-		}).then(getCollectionDates)
+		}).then(() => refreshCollectionDates({ houseNumber, streetName }))
 		logEvent(analytics, 'save_settings')
 	}
 
@@ -78,54 +80,12 @@ function useSettings(getCollectionDates, user: User | null) {
 	}
 }
 
-function useCollectionDates(user: User | null) {
-	const [isLoading, setIsLoading] = useState(true)
-	const [collectionDates, setCollectionDates] = useState<string[] | null>(
-		null
-	)
-
-	const getCollectionDates = useCallback(
-		async function getCollectionDates() {
-			if (user) {
-				setIsLoading(true)
-
-				const functions = getFunctions()
-				const getAndStoreCollectionDates = httpsCallable(
-					functions,
-					'getAndStoreCollectionDatesCallable'
-				)
-
-				let { data: dates } = await getAndStoreCollectionDates()
-
-				if (dates) {
-					dates = dates.map((dateString) => {
-						let date = new Date(dateString)
-						date.setDate(date.getDate() + 1) // kick it forward one day to account for UTC on the server
-						date.setHours(0)
-						return format(date, 'eee MMM d, Y')
-					})
-					setCollectionDates(dates)
-				}
-
-				setIsLoading(false)
-			}
-		},
-		[user]
-	)
-
-	useEffect(() => {
-		getCollectionDates()
-	}, [getCollectionDates])
-
-	return { collectionDates, getCollectionDates, isLoading }
-}
-
 function Settings() {
 	const user = useUser()
 	const {
 		isLoading: isLoadingCollectionDates,
-		getCollectionDates,
 		collectionDates,
+		refreshCollectionDates,
 	} = useCollectionDates(user)
 	const {
 		isLoading: isLoadingSettings,
@@ -136,7 +96,7 @@ function Settings() {
 		enabled,
 		setEnabled,
 		saveSettings,
-	} = useSettings(getCollectionDates, user)
+	} = useSettings(refreshCollectionDates, user)
 
 	return isLoadingSettings ? null : (
 		<>

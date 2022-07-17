@@ -34,12 +34,11 @@ export default function Layout({ children }) {
 				<div className="container">
 					<div className="navbar-brand">
 						<Link href="/">
-							<a className="navbar-item is-size-4">
+							<a href="/" className="navbar-item is-size-4">
 								Oak Bay Garbage Notifications
 							</a>
 						</Link>
-						<a
-							role="button"
+						<button
 							className={clsx('navbar-burger', {
 								'is-active': burgerExpanded,
 							})}
@@ -50,7 +49,7 @@ export default function Layout({ children }) {
 							<span aria-hidden="true"></span>
 							<span aria-hidden="true"></span>
 							<span aria-hidden="true"></span>
-						</a>
+						</button>
 					</div>
 					<div
 						className={clsx('navbar-menu', {
@@ -61,6 +60,7 @@ export default function Layout({ children }) {
 							{user !== 'loading' && user && (
 								<Link href="/settings">
 									<a
+										href="/settings"
 										className={clsx('navbar-item', {
 											'is-active':
 												router.pathname === '/settings',
@@ -73,6 +73,7 @@ export default function Layout({ children }) {
 							{user !== 'loading' && !user && (
 								<Link href="/signin">
 									<a
+										href="/signin"
 										className={clsx('navbar-item', {
 											'is-active':
 												router.pathname === '/signin',
