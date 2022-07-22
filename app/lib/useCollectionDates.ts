@@ -5,9 +5,10 @@ import { getFunctions, httpsCallable } from 'firebase/functions'
 import { format } from 'date-fns'
 import { getFirestore, doc, getDoc, Timestamp } from 'firebase/firestore'
 
-export type Address = {
+export type Settings = {
 	houseNumber: string
 	streetName: string
+	enabled: boolean
 }
 
 function dateToFormattedString(date: Date) {
@@ -46,19 +47,21 @@ export function useCollectionDates(user: User | null) {
 	async function refreshCollectionDates({
 		houseNumber,
 		streetName,
-	}: Address) {
+		enabled,
+	}: Settings) {
 		if (user) {
 			setIsLoading(true)
 
 			const functions = getFunctions()
 			const refreshCollectionDatesForAddress = httpsCallable<
-				Address,
+				Settings,
 				string[]
 			>(functions, 'refreshCollectionDatesForAddress')
 
 			let { data: dates } = await refreshCollectionDatesForAddress({
 				houseNumber,
 				streetName,
+				enabled,
 			})
 
 			if (dates) {

@@ -7,7 +7,10 @@ import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
 
 import streetNames from '../lib/streetNames'
-import { useCollectionDates, Address } from '../lib/useCollectionDates'
+import {
+	useCollectionDates,
+	Settings as SettingsType,
+} from '../lib/useCollectionDates'
 import { getAnalytics, logEvent } from '@firebase/analytics'
 
 function useUser() {
@@ -24,7 +27,7 @@ function useUser() {
 }
 
 function useSettings(
-	refreshCollectionDates: (address: Address) => Promise<unknown>,
+	refreshCollectionDates: (address: SettingsType) => Promise<unknown>,
 	user: User | null
 ) {
 	const [isLoading, setIsLoading] = useState(true)
@@ -64,7 +67,9 @@ function useSettings(
 			houseNumber,
 			streetName,
 			enabled,
-		}).then(() => refreshCollectionDates({ houseNumber, streetName }))
+		}).then(() =>
+			refreshCollectionDates({ enabled, houseNumber, streetName })
+		)
 		logEvent(analytics, 'save_settings')
 	}
 

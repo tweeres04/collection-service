@@ -35,7 +35,15 @@ exports.getAndStoreCollectionDates = functions.pubsub
 		}
 	})
 
-async function getNextCollectionDatesForAddress({ houseNumber, streetName }) {
+async function getNextCollectionDatesForAddress({
+	enabled,
+	houseNumber,
+	streetName,
+}) {
+	if (!enabled) {
+		return []
+	}
+
 	const { data } = await axios.post(
 		'https://www.oakbay.ca/municipal-services/garbage-recycling/collection-service-schedule',
 		querystring.stringify({
