@@ -5,7 +5,7 @@ import { getAnalytics, logEvent } from 'firebase/analytics'
 
 import '../lib/initializeFirebase'
 
-import heroImage from '../assets/hero-light.png'
+import heroImage from '../assets/hero.png'
 
 function Home() {
 	return (
@@ -25,6 +25,7 @@ function Home() {
 								</h2>
 								<Link href="/signin">
 									<a
+										href="/signin"
 										className="button is-primary is-large is-inverted"
 										onClick={() => {
 											logEvent(
