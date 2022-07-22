@@ -58,17 +58,30 @@ export default function Layout({ children }) {
 					>
 						<div className="navbar-end">
 							{user !== 'loading' && user && (
-								<Link href="/settings">
+								<>
+									<Link href="/settings">
+										<a
+											href="/settings"
+											className={clsx('navbar-item', {
+												'is-active':
+													router.pathname ===
+													'/settings',
+											})}
+										>
+											My Settings
+										</a>
+									</Link>
 									<a
-										href="/settings"
-										className={clsx('navbar-item', {
-											'is-active':
-												router.pathname === '/settings',
-										})}
+										href="/"
+										className="navbar-item"
+										onClick={(e) => {
+											e.preventDefault()
+											getAuth().signOut()
+										}}
 									>
-										My Settings
+										Sign out
 									</a>
-								</Link>
+								</>
 							)}
 							{user !== 'loading' && !user && (
 								<Link href="/signin">
