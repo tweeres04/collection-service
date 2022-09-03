@@ -77,6 +77,7 @@ export default function Layout({ children }) {
 										onClick={(e) => {
 											e.preventDefault()
 											getAuth().signOut()
+											router.push('/')
 										}}
 									>
 										Sign out

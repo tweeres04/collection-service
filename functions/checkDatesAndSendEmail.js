@@ -18,6 +18,8 @@ exports.checkDatesAndSendEmail = functions.pubsub
 		await checkDatesAndSendEmail()
 	})
 
+exports.sendTestEmail = functions.https.onCall(sendTestEmail)
+
 async function checkDatesAndSendEmail() {
 	const snapshot = await admin.firestore().collection('dates').get()
 
@@ -32,27 +34,21 @@ async function checkDatesAndSendEmail() {
 
 			console.log('nextCollectionDates', nextCollectionDates)
 
-			const collectionDateToNotify = nextCollectionDates.find(isTomorrow)
+			let collectionDateToNotify = nextCollectionDates.find(isTomorrow)
 
 			console.log('collectionDateToNotify', collectionDateToNotify)
 
 			if (collectionDateToNotify) {
 				const { email } = await admin.auth().getUser(doc.id)
-				const mg = mailgun({
-					apiKey: functions.config().mailgun.key,
-					domain: functions.config().mailgun.domain,
-				})
-				const data = {
-					from: 'Garbage Service Notification <garbage-service@tweeres.ca>',
-					to: email,
+				collectionDateToNotify = format(
+					collectionDateToNotify,
+					'eee MMM d, Y'
+				)
+				await sendEmail({
+					email,
 					subject: 'Your garbage day is tomorrow',
-					text: `Your next garbage day is tomorrow: ${format(
-						collectionDateToNotify,
-						'eee MMM d, Y'
-					)}`,
-				}
-				await mg.messages().send(data)
-
+					text: `Your next garbage day is tomorrow: ${collectionDateToNotify}`,
+				})
 				console.log(`Sent email to ${email}`)
 			}
 		}
@@ -61,4 +57,27 @@ async function checkDatesAndSendEmail() {
 	})
 
 	await Promise.all(promises)
+}
+
+async function sendTestEmail({ email, collectionDateToNotify }) {
+	await sendEmail({
+		email,
+		subject: 'Test Email',
+		text: `Your next garbage day is ${collectionDateToNotify}`,
+	})
+	console.log(`Sent test email to ${email}`)
+}
+
+async function sendEmail({ email, subject, text }) {
+	const mg = mailgun({
+		apiKey: functions.config().mailgun.key,
+		domain: functions.config().mailgun.domain,
+	})
+	const data = {
+		from: 'Garbage Service Notification <garbage-service@tweeres.ca>',
+		to: email,
+		subject,
+		text,
+	}
+	await mg.messages().send(data)
 }

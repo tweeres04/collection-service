@@ -12,6 +12,7 @@ import {
 	Settings as SettingsType,
 } from '../lib/useCollectionDates'
 import { getAnalytics, logEvent } from '@firebase/analytics'
+import { getFunctions, httpsCallable } from 'firebase/functions'
 
 function useUser() {
 	const [user, setUser] = useState<User | null>(null)
@@ -34,6 +35,7 @@ function useSettings(
 	const [houseNumber, setHouseNumber] = useState('')
 	const [streetName, setStreetName] = useState('')
 	const [enabled, setEnabled] = useState(true)
+	const [savedSettings, setSavedSettings] = useState(null)
 
 	useEffect(() => {
 		async function getSettings() {
@@ -44,6 +46,7 @@ function useSettings(
 
 				if (settingsSnapshot.exists()) {
 					const settings = settingsSnapshot.data()
+					setSavedSettings(settings)
 					setHouseNumber(settings.houseNumber || '')
 					setStreetName(settings.streetName || '')
 					setEnabled(
@@ -82,7 +85,16 @@ function useSettings(
 		enabled,
 		setEnabled,
 		saveSettings,
+		savedSettings,
 	}
+}
+
+function useSendTestEmail() {
+	const [testEmailSent, setTestEmailSent] = useState(false)
+	const functions = getFunctions()
+	const sendTestEmail = httpsCallable(functions, 'sendTestEmail')
+
+	return { sendTestEmail, testEmailSent, setTestEmailSent }
 }
 
 function Settings() {
@@ -101,7 +113,12 @@ function Settings() {
 		enabled,
 		setEnabled,
 		saveSettings,
+		savedSettings,
 	} = useSettings(refreshCollectionDates, user)
+	const { sendTestEmail, testEmailSent, setTestEmailSent } =
+		useSendTestEmail()
+
+	const fieldsFilledIn = houseNumber && streetName
 
 	return isLoadingSettings ? null : (
 		<>
@@ -109,11 +126,6 @@ function Settings() {
 				<title>Settings - Oak Bay Garbage Service Notifications</title>
 				<meta name="robots" content="noindex" />
 			</Head>
-			<datalist id="streetNamesList">
-				{streetNames.map((sn) => (
-					<option key={sn}>{sn}</option>
-				))}
-			</datalist>
 			<div className="hero is-medium">
 				<div className="hero-body">
 					<div className="container">
@@ -176,11 +188,13 @@ function Settings() {
 													)
 												}}
 											>
-												{streetNames.map((sn) => (
-													<option key={sn}>
-														{sn}
-													</option>
-												))}
+												{['', ...streetNames].map(
+													(sn) => (
+														<option key={sn}>
+															{sn}
+														</option>
+													)
+												)}
 											</select>
 										</div>
 									</div>
@@ -209,9 +223,7 @@ function Settings() {
 										<button
 											className="button is-primary is-large"
 											onClick={saveSettings}
-											disabled={
-												!houseNumber || !streetName
-											}
+											disabled={!fieldsFilledIn}
 										>
 											Save
 										</button>
@@ -225,22 +237,96 @@ function Settings() {
 									<>
 										<h1>Your next garbage days:</h1>
 										{collectionDates.length > 0 ? (
-											<ul>
-												{collectionDates.map((cd) => (
-													<li
-														className="is-size-4"
-														key={cd}
+											<>
+												<ul>
+													{collectionDates.map(
+														(cd) => (
+															<li
+																className="is-size-4"
+																key={cd}
+															>
+																{cd}
+															</li>
+														)
+													)}
+												</ul>
+												<p>
+													You're all set! Add
+													<code>
+														garbage-service@tweeres.ca
+													</code>
+													to your safe senders list so
+													the emails don't go to your
+													junk mail.
+												</p>
+												{testEmailSent ? (
+													<div className="notification is-primary is-light">
+														<p>
+															Test email sent!
+															Check your inbox and
+															spam/junk folders.
+														</p>
+														<p>
+															If it's in spam or
+															junk, be sure to
+															mark it as "not
+															spam" or "not junk"
+															so you see the real
+															alerts!
+														</p>
+													</div>
+												) : (
+													<p>
+														Test it out by clicking
+														the button below:
+													</p>
+												)}
+												<p>
+													<button
+														className="button"
+														onClick={async () => {
+															await sendTestEmail(
+																{
+																	collectionDateToNotify:
+																		collectionDates[0],
+																	email: user?.email,
+																}
+															)
+															setTestEmailSent(
+																true
+															)
+														}}
 													>
-														{cd}
-													</li>
-												))}
-											</ul>
+														Send Test Email
+													</button>
+												</p>
+												<p>
+													Garbage dates out of date?
+													Refresh them with this
+													button:
+												</p>
+												<button
+													className="button"
+													onClick={saveSettings}
+												>
+													Refresh dates
+												</button>
+											</>
 										) : enabled ? (
-											<p>
-												No dates found. Please double
-												check the address you entered
-												and try again.
-											</p>
+											!savedSettings ? (
+												<p>
+													Enter your address to get
+													your next garbage dates and
+													set up your email
+													notifications.
+												</p>
+											) : (
+												<p>
+													No dates found. Please
+													double check the address you
+													entered and try again.
+												</p>
+											)
 										) : (
 											<p>
 												You've disabled your

@@ -18,3 +18,5 @@ exports.checkDatesAndSendEmailHttps =
 	checkDatesAndSendEmail.checkDatesAndSendEmailHttps
 
 exports.checkDatesAndSendEmail = checkDatesAndSendEmail.checkDatesAndSendEmail
+
+exports.sendTestEmail = checkDatesAndSendEmail.sendTestEmail
