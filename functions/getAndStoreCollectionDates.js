@@ -76,7 +76,7 @@ async function getNextCollectionDates(querySnapshot) {
 				return
 			}
 
-			const dates = getNextCollectionDatesForAddress(settings)
+			const dates = await getNextCollectionDatesForAddress(settings)
 
 			console.log('Found dates', dates)
 
