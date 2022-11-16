@@ -1,0 +1,8 @@
+{
+	"dependencies": {
+		"firebase-admin": "^11.1.0"
+	},
+	"scripts": {
+		"start": "GOOGLE_APPLICATION_CREDENTIALS=collection-service-firebase-adminsdk-mnhd4-5ee83893a9.json node index.mjs"
+	}
+}

@@ -1,5 +1,5 @@
 node_modules
 output.*
-collection-service.json
+collection-service*.json
 firebase-debug.log
 .runtimeconfig.json
