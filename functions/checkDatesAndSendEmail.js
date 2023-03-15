@@ -47,7 +47,7 @@ async function checkDatesAndSendEmail() {
 				await sendEmail({
 					email,
 					subject: 'Your garbage day is tomorrow',
-					text: `Your next garbage day is tomorrow: ${collectionDateToNotify}`,
+					text: `Your next garbage day is tomorrow: ${collectionDateToNotify}\n\nKnow someone who could use these notifications? Send them here to get set up! https://oakbaygarbagenotifications.tweeres.ca/?utm_source=email&utm_medium=referral&utm_campaign=email_referrals&utm_content=${email}`,
 				})
 				console.log(`Sent email to ${email}`)
 			}

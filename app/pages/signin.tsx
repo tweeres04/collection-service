@@ -10,8 +10,6 @@ import {
 } from 'firebase/auth'
 import { getAnalytics, logEvent } from '@firebase/analytics'
 
-import '../lib/initializeFirebase'
-
 const Home: NextPage = () => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')

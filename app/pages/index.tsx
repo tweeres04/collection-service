@@ -3,8 +3,6 @@ import Image from 'next/image'
 
 import { getAnalytics, logEvent } from 'firebase/analytics'
 
-import '../lib/initializeFirebase'
-
 import heroImage from '../assets/hero.png'
 
 function Home() {

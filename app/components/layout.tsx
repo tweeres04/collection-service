@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import clsx from 'clsx'
 import Head from 'next/head'
 
+import '../lib/initializeFirebase'
+
 export default function Layout({ children }) {
 	const [user, setUser] = useState('loading')
 	const [burgerExpanded, setBurgerExpanded] = useState(false)

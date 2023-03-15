@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 
-import '../lib/initializeFirebase'
-
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
 
