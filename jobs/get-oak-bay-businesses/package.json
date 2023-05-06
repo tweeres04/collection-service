@@ -1,0 +1,6 @@
+{
+    "dependencies": {
+        "csv-stringify": "^6.2.3",
+        "scrape-it": "^5.3.2"
+    }
+}
