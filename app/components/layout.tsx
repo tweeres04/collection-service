@@ -35,10 +35,8 @@ export default function Layout({ children }) {
 			<div className="navbar is-primary">
 				<div className="container">
 					<div className="navbar-brand">
-						<Link href="/">
-							<a href="/" className="navbar-item is-size-4">
-								Oak Bay Garbage Notifications
-							</a>
+						<Link href="/" className="navbar-item is-size-4">
+							Oak Bay Garbage Notifications
 						</Link>
 						<button
 							className={clsx('navbar-burger', {
@@ -61,17 +59,14 @@ export default function Layout({ children }) {
 						<div className="navbar-end">
 							{user !== 'loading' && user && (
 								<>
-									<Link href="/settings">
-										<a
-											href="/settings"
-											className={clsx('navbar-item', {
-												'is-active':
-													router.pathname ===
-													'/settings',
-											})}
-										>
-											My Settings
-										</a>
+									<Link
+										href="/settings"
+										className={clsx('navbar-item', {
+											'is-active':
+												router.pathname === '/settings',
+										})}
+									>
+										My Settings
 									</Link>
 									<a
 										href="/"
@@ -87,16 +82,14 @@ export default function Layout({ children }) {
 								</>
 							)}
 							{user !== 'loading' && !user && (
-								<Link href="/signin">
-									<a
-										href="/signin"
-										className={clsx('navbar-item', {
-											'is-active':
-												router.pathname === '/signin',
-										})}
-									>
-										Sign in
-									</a>
+								<Link
+									href="/signin"
+									className={clsx('navbar-item', {
+										'is-active':
+											router.pathname === '/signin',
+									})}
+								>
+									Sign in
 								</Link>
 							)}
 						</div>

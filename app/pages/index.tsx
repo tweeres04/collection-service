@@ -21,19 +21,17 @@ function Home() {
 									emails the day before, every time. No more
 									fiddling with hard to use schedules.
 								</h2>
-								<Link href="/signin">
-									<a
-										href="/signin"
-										className="button is-primary is-large is-inverted"
-										onClick={() => {
-											logEvent(
-												getAnalytics(),
-												'click_signin_button'
-											)
-										}}
-									>
-										Set it up for free →
-									</a>
+								<Link
+									href="/signin"
+									className="button is-primary is-large is-inverted"
+									onClick={() => {
+										logEvent(
+											getAnalytics(),
+											'click_signin_button'
+										)
+									}}
+								>
+									Set it up for free →
 								</Link>
 							</div>
 							<div className="column has-text-centered">
