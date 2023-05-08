@@ -3,3 +3,9 @@ $truck-green: #a0d4a4;
 $primary: $truck-green;
 
 @import 'bulma/bulma.sass';
+
+@media print {
+	.is-hidden-print {
+		display: none;
+	}
+}

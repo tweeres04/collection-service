@@ -32,7 +32,7 @@ export default function Layout({ children }) {
 				/>
 				<link rel="icon" href="/truck.png" />
 			</Head>
-			<div className="navbar is-primary">
+			<div className="navbar is-primary is-hidden-print">
 				<div className="container">
 					<div className="navbar-brand">
 						<Link href="/" className="navbar-item is-size-4">
@@ -97,7 +97,7 @@ export default function Layout({ children }) {
 				</div>
 			</div>
 			{children}
-			<footer className="footer">
+			<footer className="footer is-hidden-print">
 				<div className="content has-text-centered">
 					<p>
 						By <a href="https://tweeres.ca">Tyler Weeres</a>
