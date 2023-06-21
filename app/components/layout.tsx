@@ -1,11 +1,16 @@
 import Link from 'next/link'
 import { getAuth, onAuthStateChanged } from '@firebase/auth'
+import { getAnalytics, isSupported, setUserId } from 'firebase/analytics'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import clsx from 'clsx'
 import Head from 'next/head'
 
 import '../lib/initializeFirebase'
+
+const analytics = isSupported().then((supported) =>
+	supported ? getAnalytics() : null
+)
 
 export default function Layout({ children }) {
 	const [user, setUser] = useState('loading')
@@ -15,6 +20,13 @@ export default function Layout({ children }) {
 	useEffect(() => {
 		onAuthStateChanged(getAuth(), (user) => {
 			setUser(user)
+			if (user) {
+				analytics.then((analytics) => {
+					if (analytics) {
+						setUserId(analytics, user?.uid)
+					}
+				})
+			}
 		})
 	})
 
