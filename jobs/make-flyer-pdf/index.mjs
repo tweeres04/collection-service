@@ -11,8 +11,8 @@ await page.goto('http://localhost:3000/flyer', {
 await page.setViewport({ width: 435, height: 730 })
 
 const pdfResult = await page.pdf({
-	width: 435,
-	height: 730,
+	width: 475,
+	height: 475,
 	omitBackground: false,
 	printBackground: true,
 })

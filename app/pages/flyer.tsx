@@ -1,4 +1,4 @@
-import QrCode from '../components/qr'
+import QrCode from 'react-qr-code'
 
 function Home() {
 	return (
@@ -16,7 +16,18 @@ function Home() {
 						</div>
 						<div className="columns is-mobile">
 							<div className="column is-two-thirds is-one-third-desktop mx-auto">
-								<QrCode />
+								<QrCode
+									value="https://oakbaygarbagenotifications.tweeres.ca/?utm_source=minimal-qr-code&utm_medium=flyer"
+									bgColor="#00000000"
+									size={32}
+									style={{
+										height: 'auto',
+										maxWidth: '100%',
+										width: '100%',
+									}}
+									fgColor="rgba(0, 0, 0, 0.7)"
+									viewBox={`0 0 32 32`}
+								/>
 							</div>
 						</div>
 					</div>
