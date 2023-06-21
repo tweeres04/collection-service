@@ -28,7 +28,7 @@ export default function Layout({ children }) {
 				})
 			}
 		})
-	})
+	}, [])
 
 	function toggleBurger() {
 		setBurgerExpanded((expanded) => !expanded)
