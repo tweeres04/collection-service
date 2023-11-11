@@ -12,6 +12,10 @@ const analytics = isSupported().then((supported) =>
 	supported ? getAnalytics() : null
 )
 
+const title = 'Oak Bay Garbage Service Notifications'
+const description =
+	"Make garbage day in Oak Bay effortless. We'll send you an email the day before."
+
 export default function Layout({ children }) {
 	const [user, setUser] = useState('loading')
 	const [burgerExpanded, setBurgerExpanded] = useState(false)
@@ -37,12 +41,19 @@ export default function Layout({ children }) {
 	return (
 		<>
 			<Head>
-				<title>Oak Bay Garbage Service Notifications</title>
-				<meta
-					name="description"
-					content="Make garbage day in Oak Bay effortless. We'll send you an email the day before."
-				/>
+				<title>{title}</title>
+				<meta name="description" content={description} />
 				<link rel="icon" href="/truck.png" />
+				<meta property="og:title" content={title} />
+				<meta
+					property="og:url"
+					content="https://oakbaygarbagenotifications.tweeres.ca"
+				/>
+				<meta property="og:description" content={description} />
+				<meta
+					property="og:image"
+					content="https://oakbaygarbagenotifications.tweeres.ca/hero.png"
+				/>
 			</Head>
 			<div className="navbar is-primary">
 				<div className="container">

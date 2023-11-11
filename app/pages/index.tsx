@@ -3,8 +3,6 @@ import Image from 'next/image'
 
 import { getAnalytics, logEvent } from 'firebase/analytics'
 
-import heroImage from '../assets/hero.png'
-
 function Home() {
 	return (
 		<>
@@ -36,7 +34,9 @@ function Home() {
 							</div>
 							<div className="column has-text-centered">
 								<Image
-									src={heroImage}
+									src="/hero.png"
+									width={660}
+									height={464}
 									alt="A screenshot of an email that tells you your garbage day is tomorrow"
 								/>
 							</div>
