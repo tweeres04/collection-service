@@ -7,6 +7,7 @@ initializeApp({
 })
 
 const db = getFirestore()
+const oakBayTotalDetachedHomes = 4915 // Reference: https://www.point2homes.com/CA/Demographics/BC/Oak-Bay-Demographics.html
 
 async function settings() {
 	const snapshot = await db.collection('settings').get()
@@ -19,7 +20,12 @@ async function settings() {
 			return sum
 		}
 	}, 0)
-	console.log(`${total} accounts enabled`)
+	console.log(
+		`${total} accounts enabled of ${oakBayTotalDetachedHomes} detached homes in Oak Bay (${(
+			(total / oakBayTotalDetachedHomes) *
+			100
+		).toFixed(1)}%)`
+	)
 }
 
 async function dates() {
