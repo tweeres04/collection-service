@@ -1,0 +1,9 @@
+{
+	"dependencies": {
+		"firebase-admin": "^11.1.0",
+		"lodash": "^4.17.21"
+	},
+	"scripts": {
+		"start": "GOOGLE_APPLICATION_CREDENTIALS=collection-service-firebase-adminsdk-mnhd4-d6905de86c.json node index.mjs"
+	}
+}
