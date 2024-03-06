@@ -1,6 +1,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-const mailgun = require('mailgun-js')
+const Mailgun = require('mailgun.js')
+const formData = require('form-data')
 
 const { isTomorrow, format } = require('date-fns')
 
@@ -44,10 +45,15 @@ async function checkDatesAndSendEmail() {
 					collectionDateToNotify,
 					'eee MMM d, Y'
 				)
+				const shareLink =
+					Math.random() > 0.33
+						? `\n\nKnow someone who could use these notifications? Send them here to get set up: https://oakbaygarbagenotifications.tweeres.ca/?utm_source=email&utm_medium=referral&utm_campaign=email_referrals&utm_content=${email}`
+						: '\n\nGot feedback about this service? Just reply to this email!'
 				await sendEmail({
 					email,
 					subject: 'Your garbage day is tomorrow',
-					text: `Your next garbage day is tomorrow: ${collectionDateToNotify}\n\nKnow someone who could use these notifications? Send them here to get set up! https://oakbaygarbagenotifications.tweeres.ca/?utm_source=email&utm_medium=referral&utm_campaign=email_referrals&utm_content=${email}`,
+					text: `Your next garbage day is tomorrow: ${collectionDateToNotify}${shareLink}`,
+					tags: ['OBGCN'],
 				})
 				console.log(`Sent email to ${email}`)
 			}
@@ -64,20 +70,25 @@ async function sendTestEmail({ email, collectionDateToNotify }) {
 		email,
 		subject: 'Test Email',
 		text: `Your next garbage day is ${collectionDateToNotify}`,
+		tags: ['OBGCN - Test Email'],
 	})
 	console.log(`Sent test email to ${email}`)
 }
 
-async function sendEmail({ email, subject, text }) {
-	const mg = mailgun({
-		apiKey: functions.config().mailgun.key,
-		domain: functions.config().mailgun.domain,
+async function sendEmail({ email, subject, text, tags = [] }) {
+	const mailgun = new Mailgun(formData)
+	const mg = mailgun.client({
+		username: 'api',
+		key: functions.config().mailgun.key,
 	})
 	const data = {
 		from: 'Garbage Service Notification <garbage-service@tweeres.ca>',
 		to: email,
 		subject,
 		text,
+		'h:Reply-To': 'tweeres04@gmail.com',
+		'o:tag': tags,
 	}
-	await mg.messages().send(data)
+
+	await mg.messages.create(functions.config().mailgun.domain, data)
 }

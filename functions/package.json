@@ -13,7 +13,8 @@
 		"date-fns": "^2.29.3",
 		"firebase-admin": "^11.5.0",
 		"firebase-functions": "^4.2.1",
-		"mailgun-js": "^0.22.0",
+		"form-data": "^4.0.0",
+		"mailgun.js": "^10.2.1",
 		"query-string": "^8.1.0",
 		"scrape-it": "^5.3.2"
 	},
