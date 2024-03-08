@@ -1,4 +1,5 @@
-const functions = require('firebase-functions')
+const { onRequest, onCall } = require('firebase-functions/v2/https')
+const { onSchedule } = require('firebase-functions/v2/scheduler')
 const admin = require('firebase-admin')
 
 const { scrapeHTML } = require('scrape-it')
@@ -7,33 +8,34 @@ const axios = require('axios')
 const querystring = require('querystring')
 const { parse } = require('date-fns')
 
-exports.getAndStoreCollectionDatesHttps = functions.https.onRequest(
-	async (req, res) => {
-		const dates = await getNextCollectionDates()
-		await storeDates(dates)
-		res.sendStatus(204)
-	}
-)
+exports.getAndStoreCollectionDatesHttps = onRequest(async (req, res) => {
+	const dates = await getNextCollectionDates()
+	await storeDates(dates)
+	res.sendStatus(204)
+})
 
-exports.refreshCollectionDatesForAddress = functions.https.onCall(
-	async (data, context) => {
+exports.refreshCollectionDatesForAddress = onCall(
+	async ({ data, auth: { uid } }) => {
 		const collectionDates = await getNextCollectionDatesForAddress(data)
-		storeDates({ [context.auth.uid]: collectionDates })
+		storeDates({ [uid]: collectionDates })
 		return collectionDates.map((d) => d.toISOString())
 	}
 )
 
-exports.getAndStoreCollectionDates = functions.pubsub
-	.schedule('0 0 1,15 * *')
-	.timeZone('America/Vancouver')
-	.onRun(async () => {
+exports.getAndStoreCollectionDates = onSchedule(
+	{
+		schedule: '0 0 1,15 * *',
+		timeZone: 'America/Vancouver',
+	},
+	async () => {
 		try {
 			const dates = await getNextCollectionDates()
 			await storeDates(dates)
 		} catch (err) {
 			console.error(err.request)
 		}
-	})
+	}
+)
 
 async function getNextCollectionDatesForAddress({
 	enabled,
