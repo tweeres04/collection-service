@@ -12,7 +12,7 @@ const analytics = isSupported().then((supported) =>
 	supported ? getAnalytics() : null
 )
 
-const title = 'Oak Bay Garbage Service Notifications'
+const title = 'Oak Bay Garbage Service Email Notifications'
 const description =
 	"Make garbage day in Oak Bay effortless. We'll send you an email the day before."
 
