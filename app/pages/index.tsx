@@ -2,8 +2,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import { getAnalytics, logEvent } from 'firebase/analytics'
+import { useUser } from '../lib/useUser'
 
 function Home() {
+	const user = useUser()
 	return (
 		<>
 			<div className="hero is-halfheight is-primary">
@@ -19,18 +21,27 @@ function Home() {
 									emails the day before, every time. No more
 									fiddling with hard to use schedules.
 								</h2>
-								<Link
-									href="/signin"
-									className="button is-primary is-large is-inverted"
-									onClick={() => {
-										logEvent(
-											getAnalytics(),
-											'click_signin_button'
-										)
-									}}
-								>
-									Set it up for free →
-								</Link>
+								{user ? (
+									<Link
+										href="/settings"
+										className="button is-primary is-large is-inverted"
+									>
+										My settings
+									</Link>
+								) : (
+									<Link
+										href="/signin"
+										className="button is-primary is-large is-inverted"
+										onClick={() => {
+											logEvent(
+												getAnalytics(),
+												'click_signin_button'
+											)
+										}}
+									>
+										Set it up for free →
+									</Link>
+								)}
 							</div>
 							<div className="column has-text-centered">
 								<Image

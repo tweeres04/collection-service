@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 
-import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
+import { getAuth, User } from 'firebase/auth'
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
 
 import streetNames from '../lib/streetNames'
@@ -12,18 +12,7 @@ import {
 import { getAnalytics, logEvent } from '@firebase/analytics'
 import { getFunctions, httpsCallable } from 'firebase/functions'
 
-function useUser() {
-	const [user, setUser] = useState<User | null>(null)
-
-	useEffect(() => {
-		const auth = getAuth()
-		onAuthStateChanged(auth, (user) => {
-			setUser(user)
-		})
-	}, [])
-
-	return user
-}
+import { useUser } from '../lib/useUser'
 
 function useSettings(
 	refreshCollectionDates: (address: SettingsType) => Promise<unknown>,
