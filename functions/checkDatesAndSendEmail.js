@@ -55,14 +55,17 @@ async function checkDatesAndSendEmail() {
 					collectionDateToNotify,
 					'eee MMM d, Y'
 				)
+				const shareUrl = `https://oakbaygarbagenotifications.tweeres.ca/?utm_source=email&utm_medium=referral&utm_campaign=email_referrals&utm_content=${email}`
 				const shareLink =
 					Math.random() > 0.33
-						? `\n\nKnow someone who could use these notifications? Send them here to get set up: https://oakbaygarbagenotifications.tweeres.ca/?utm_source=email&utm_medium=referral&utm_campaign=email_referrals&utm_content=${email}`
-						: '\n\nGot feedback about this service? Just reply to this email!'
+						? `<p>Know someone who could use these notifications? Send them here to get set up: <a href="${shareUrl}">${shareUrl}</a></p>`
+						: '<p>Got feedback about this service? Just reply to this email!</p>'
+				const wheelyCleanUrl = 'https://wheelyclean.ca'
+				const sponsorshipMessage = `<p>Wheely Clean offers dental hygiene at your doorstep. Learn more at <a href="${wheelyCleanUrl}">${wheelyCleanUrl}</a></p>`
 				await sendEmail({
 					email,
 					subject: 'Your garbage day is tomorrow',
-					text: `Your next garbage day is tomorrow: ${collectionDateToNotify}${shareLink}`,
+					html: `<p>Your next garbage day is tomorrow: ${collectionDateToNotify}</p>${sponsorshipMessage}`,
 					tags: ['OBGCN'],
 				})
 				console.log(`Sent email to ${email}`)
@@ -79,13 +82,13 @@ async function sendTestEmail({ data: { email, collectionDateToNotify } }) {
 	await sendEmail({
 		email,
 		subject: 'Test Email',
-		text: `Your next garbage day is ${collectionDateToNotify}`,
+		html: `<p>Your next garbage day is ${collectionDateToNotify}</p>`,
 		tags: ['OBGCN - Test Email'],
 	})
 	console.log(`Sent test email to ${email}`)
 }
 
-async function sendEmail({ email, subject, text, tags = [] }) {
+async function sendEmail({ email, subject, html, tags = [] }) {
 	const mailgun = new Mailgun(formData)
 	const mg = mailgun.client({
 		username: 'api',
@@ -95,7 +98,7 @@ async function sendEmail({ email, subject, text, tags = [] }) {
 		from: 'Garbage Service Notification <garbage-service@tweeres.ca>',
 		to: email,
 		subject,
-		text,
+		html,
 		'h:Reply-To': 'tweeres04@gmail.com',
 		'o:tag': tags,
 	}
