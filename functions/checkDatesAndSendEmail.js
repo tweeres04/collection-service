@@ -60,8 +60,10 @@ async function checkDatesAndSendEmail() {
 					Math.random() > 0.33
 						? `<p>Know someone who could use these notifications? Send them here to get set up: <a href="${shareUrl}">${shareUrl}</a></p>`
 						: '<p>Got feedback about this service? Just reply to this email!</p>'
+
 				const wheelyCleanUrl = 'https://wheelyclean.ca'
 				const sponsorshipMessage = `<p>Wheely Clean offers dental hygiene at your doorstep. Learn more at <a href="${wheelyCleanUrl}">${wheelyCleanUrl}</a></p>`
+
 				await sendEmail({
 					email,
 					subject: 'Your garbage day is tomorrow',

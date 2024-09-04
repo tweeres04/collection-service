@@ -12,9 +12,10 @@ const analytics = isSupported().then((supported) =>
 	supported ? getAnalytics() : null
 )
 
-const title = 'Oak Bay Garbage Day Email Notifications'
+const title =
+	'Get emails about Oak Bay Garbage Day - Oak Bay Garbage Day Notifications'
 const description =
-	"Make garbage day in Oak Bay effortless. We'll send you an email the day before."
+	'Make garbage day in Oak Bay effortless. We send you an email the day before.'
 
 export default function Layout({ children }) {
 	const [user, setUser] = useState('loading')

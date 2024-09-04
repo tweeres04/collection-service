@@ -17,9 +17,9 @@ function Home() {
 									Make garbage day in Oak Bay effortless
 								</h1>
 								<h2 className="subtitle">
-									Set up your address and email, then get
-									emails the day before, every time. No more
-									fiddling with hard to use schedules.
+									Get emails the day before garbage day. Just
+									set up your home address and email. No more
+									fiddling with paper schedules.
 								</h2>
 								{user ? (
 									<Link
