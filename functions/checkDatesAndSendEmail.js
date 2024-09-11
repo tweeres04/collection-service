@@ -67,7 +67,7 @@ async function checkDatesAndSendEmail() {
 				await sendEmail({
 					email,
 					subject: 'Your garbage day is tomorrow',
-					html: `<p>Your next garbage day is tomorrow: ${collectionDateToNotify}</p>${sponsorshipMessage}`,
+					html: `<p>Your next garbage day is tomorrow: ${collectionDateToNotify}</p>${shareLink}`,
 					tags: ['OBGCN'],
 				})
 				console.log(`Sent email to ${email}`)
