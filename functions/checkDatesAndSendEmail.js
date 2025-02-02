@@ -64,9 +64,14 @@ async function checkDatesAndSendEmail() {
 				const wheelyCleanUrl = 'https://wheelyclean.ca'
 				const sponsorshipMessage = `<p>Wheely Clean offers dental hygiene at your doorstep. Learn more at <a href="${wheelyCleanUrl}">${wheelyCleanUrl}</a></p>`
 
+				const subject =
+					email === 'ldjssegal@hotmail.com' // https://mail.google.com/mail/u/0/#search/diane/FMfcgzQZSjdGGRRpDbswtDvRVQvXRTDs
+						? 'Your Oak Bay garbage day is tomorrow'
+						: 'Your garbage day is tomorrow'
+
 				await sendEmail({
 					email,
-					subject: 'Your garbage day is tomorrow',
+					subject,
 					html: `<p>Your next garbage day is tomorrow: ${collectionDateToNotify}</p>${shareLink}`,
 					tags: ['OBGCN'],
 				})
