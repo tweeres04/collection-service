@@ -14,12 +14,12 @@ function Home() {
 						<div className="columns is-vcentered">
 							<div className="column">
 								<h1 className="title">
-									Make garbage day in Oak Bay effortless
+									Make the Oak Bay garbage schedule effortless
 								</h1>
 								<h2 className="subtitle">
-									Get emails the day before garbage day. Just
-									set up your home address and email. No more
-									fiddling with paper schedules.
+									Get email reminders for your Oak Bay garbage
+									schedule. Just set up your address and
+									email. No more checking paper schedules.
 								</h2>
 								{user ? (
 									<Link
@@ -48,7 +48,7 @@ function Home() {
 									src="/hero.png"
 									width={660}
 									height={464}
-									alt="A screenshot of an email that tells you your garbage day is tomorrow"
+									alt="A screenshot of an email that tells you your garbage day is scheduled for tomorrow"
 								/>
 							</div>
 						</div>

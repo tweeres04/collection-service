@@ -13,9 +13,9 @@ const analytics = isSupported().then((supported) =>
 )
 
 const title =
-	'Get emails about Oak Bay Garbage Day - Oak Bay Garbage Day Notifications'
+	'Get emails for the Oak Bay Garbage Schedule - Oak Bay Garbage Schedule Notifications'
 const description =
-	'Make garbage day in Oak Bay effortless. We send you an email the day before.'
+	'Forget about checking the Oak Bay garbage schedule. Our free service emails you the day before pickup day. No more missed collections or paper schedules!'
 
 export default function Layout({ children }) {
 	const [user, setUser] = useState('loading')
