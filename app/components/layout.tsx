@@ -128,6 +128,12 @@ export default function Layout({ children }) {
 					</p>
 				</div>
 			</footer>
+			{/* Simple analytics */}
+			<script
+				data-collect-dnt="true"
+				async
+				src="https://scripts.simpleanalyticscdn.com/latest.js"
+			></script>
 		</>
 	)
 }
