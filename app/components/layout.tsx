@@ -134,6 +134,12 @@ export default function Layout({ children }) {
 				async
 				src="https://scripts.simpleanalyticscdn.com/latest.js"
 			></script>
+			{/* Ahrefs analytics */}
+			<script
+				src="https://analytics.ahrefs.com/analytics.js"
+				data-key="JEfkLHB/ymdefhrLPkDLJw"
+				async
+			></script>
 		</>
 	)
 }
