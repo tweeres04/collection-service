@@ -21,6 +21,10 @@ function Home() {
 									schedule. Just set up your address and
 									email. No more checking paper schedules.
 								</h2>
+								<p className="mb-5">
+									379+ Oak Bay neighbours never miss garbage
+									day.
+								</p>
 								{user ? (
 									<Link
 										href="/settings"
