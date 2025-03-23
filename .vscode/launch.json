@@ -5,12 +5,11 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "node",
+			"name": "Next.js debug",
+			"type": "node-terminal",
 			"request": "launch",
-			"name": "Launch Program",
-			"skipFiles": ["<node_internals>/**"],
-			"program": "${workspaceFolder}/jobs/get-oak-bay-businesses/index.mjs"
-			"cwd": "${workspaceFolder}/jobs/get-oak-bay-businesses/"
+			"command": "yarn start",
+			"cwd": "${workspaceFolder}/app"
 		}
 	]
 }
