@@ -128,18 +128,22 @@ export default function Layout({ children }) {
 					</p>
 				</div>
 			</footer>
-			{/* Simple analytics */}
-			<script
-				data-collect-dnt="true"
-				async
-				src="https://scripts.simpleanalyticscdn.com/latest.js"
-			></script>
-			{/* Ahrefs analytics */}
-			<script
-				src="https://analytics.ahrefs.com/analytics.js"
-				data-key="JEfkLHB/ymdefhrLPkDLJw"
-				async
-			></script>
+			{process.env.NODE_ENV === 'production' ? (
+				<>
+					{/* Simple analytics */}
+					<script
+						data-collect-dnt="true"
+						async
+						src="https://scripts.simpleanalyticscdn.com/latest.js"
+					></script>
+					{/* Ahrefs analytics */}
+					<script
+						src="https://analytics.ahrefs.com/analytics.js"
+						data-key="JEfkLHB/ymdefhrLPkDLJw"
+						async
+					></script>
+				</>
+			) : null}
 		</>
 	)
 }
