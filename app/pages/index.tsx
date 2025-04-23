@@ -33,18 +33,23 @@ function Home() {
 										My settings
 									</Link>
 								) : (
-									<Link
-										href="/signin"
-										className="button is-primary is-large is-inverted"
-										onClick={() => {
-											logEvent(
-												getAnalytics(),
-												'click_signin_button'
-											)
-										}}
-									>
-										Set it up for free →
-									</Link>
+									<p>
+										This service has been discontinued. Oak
+										Bay has taken down the page where I was
+										looking up the schedule.
+									</p>
+									// <Link
+									// 	href="/signin"
+									// 	className="button is-primary is-large is-inverted"
+									// 	onClick={() => {
+									// 		logEvent(
+									// 			getAnalytics(),
+									// 			'click_signin_button'
+									// 		)
+									// 	}}
+									// >
+									// 	Set it up for free →
+									// </Link>
 								)}
 							</div>
 							<div className="column has-text-centered">
